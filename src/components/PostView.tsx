@@ -5,7 +5,7 @@ import Image from "next/image";
 
 dayjs.extend(relativeTime);
 
-type PostWithUser = RouterOutputs["post"]["getAll"][number];
+export type PostWithUser = RouterOutputs["post"]["getAll"][number];
 
 const PostView = (props: PostWithUser) => {
   const { post, author } = props;
