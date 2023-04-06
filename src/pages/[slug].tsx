@@ -1,28 +1,15 @@
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
-import { appRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { prisma } from "~/server/db";
-import superjson from "superjson";
 import Layout from "~/components/Layout";
 import Image from "next/image";
 import ProfileFeed from "~/components/ProfileFeed";
-import { useUser } from "@clerk/nextjs";
-import Router from "next/router";
-import { useEffect } from "react";
+import { generateSsgHelper } from "~/server/helpers/ssgHelper";
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
-  const { isSignedIn } = useUser();
   const { data } = api.profile.getUserByUsername.useQuery({
     username,
   });
-
-  useEffect(() => {
-    if (!isSignedIn) {
-      Router.push("/login").catch((err) => console.error(err));
-    }
-  }, [isSignedIn]);
 
   if (!data) {
     return <div>404</div>;
@@ -54,11 +41,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: { prisma, userId: null },
-    transformer: superjson,
-  });
+  const ssg = generateSsgHelper();
 
   const slug = context.params?.slug;
 
