@@ -1,11 +1,14 @@
-import { useUser } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "~/utils/api";
 import { LoadingSpinner } from "./LoadingPage";
+import Router from "next/router";
+
 const CreatePostWizard = () => {
   const { user } = useUser();
+  const { signOut } = useClerk();
   const [input, setInput] = useState("");
   const ctx = api.useContext();
   const { mutate, isLoading: isPosting } = api.post.create.useMutation({
@@ -52,13 +55,30 @@ const CreatePostWizard = () => {
         }}
       />
       {input !== "" && !isPosting && (
-        <button onClick={() => mutate({ content: input })}>Post</button>
+        <button
+          className="rounded-2xl bg-[#1D9BF0] px-5 text-white"
+          onClick={() => mutate({ content: input })}
+        >
+          Post
+        </button>
       )}
       {isPosting && (
         <div className="flex items-center justify-center">
           <LoadingSpinner size={20} />
         </div>
       )}
+      <button
+        className="ml-2 rounded-2xl bg-[#1D9BF0] p-2 text-white"
+        onClick={() => {
+          signOut()
+            .then(() =>
+              Router.push("/login").catch((err) => console.error(err))
+            )
+            .catch((err) => console.error(err));
+        }}
+      >
+        Sign Out
+      </button>
     </div>
   );
 };

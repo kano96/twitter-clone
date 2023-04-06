@@ -8,11 +8,21 @@ import superjson from "superjson";
 import Layout from "~/components/Layout";
 import Image from "next/image";
 import ProfileFeed from "~/components/ProfileFeed";
+import { useUser } from "@clerk/nextjs";
+import Router from "next/router";
+import { useEffect } from "react";
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
+  const { isSignedIn } = useUser();
   const { data } = api.profile.getUserByUsername.useQuery({
     username,
   });
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      Router.push("/login").catch((err) => console.error(err));
+    }
+  }, [isSignedIn]);
 
   if (!data) {
     return <div>404</div>;
