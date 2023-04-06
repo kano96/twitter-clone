@@ -5,6 +5,8 @@ import { api } from "~/utils/api";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { prisma } from "~/server/db";
 import superjson from "superjson";
+import Layout from "~/components/Layout";
+import Image from "next/image";
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data } = api.profile.getUserByUsername.useQuery({
@@ -19,11 +21,22 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
       <Head>
         <title>{data.username}</title>
       </Head>
-      <main className="flex h-screen justify-center">
-        <div className="h-full w-full border-x  border-slate-400 md:max-w-2xl">
-          {data.username}
+      <Layout>
+        <div className="relative h-36  bg-slate-600">
+          <Image
+            src={data.profilImageUrl}
+            alt={`${data.username ?? ""} profile pic`}
+            width={128}
+            height={128}
+            className="absolute bottom-0 left-0 -mb-[64px] ml-4 rounded-full border-4 border-black"
+          />
         </div>
-      </main>
+        <div className="h-[64px]"></div>
+        <div className="p-4 text-2xl font-bold">
+          {`@${data.username ?? ""}`}{" "}
+        </div>
+        <div className="w-full border-b border-slate-400"></div>
+      </Layout>
     </>
   );
 };

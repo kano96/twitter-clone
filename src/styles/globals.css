@@ -5,5 +5,5 @@
 
 body {
     @apply bg-black text-slate-100 ;
-    overflow-y: hidden;
+    overscroll-behavior: none;
 }
